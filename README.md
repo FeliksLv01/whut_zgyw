@@ -1,8 +1,10 @@
 # 武汉理工大学中国语文刷时长工具
 
-使用electron-vue搭建，可以自动刷中国语文的在线时长。[下载地址](https://github.com/kcqnly/whut-zgyw/releases)
+使用electron-vue搭建，可以自动刷中国语文的在线时长。
 
 ![ui](https://s1.ax1x.com/2020/04/23/Ja0OJg.png)
+
+## [安装包下载地址](https://github.com/kcqnly/whut-zgyw/releases)
 
 ## 环境要求
 
