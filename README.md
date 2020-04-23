@@ -2,7 +2,7 @@
 
 使用electron-vue搭建，可以自动刷中国语文的在线时长。
 
-![ui](/picture/ui.png)
+![ui](https://s1.ax1x.com/2020/04/23/Ja0OJg.png)
 
 ## 环境要求
 
