@@ -17,7 +17,7 @@ Future<void> main() async {
     await windowManager.setMinimumSize(const Size(600, 500));
     await windowManager.center();
     await windowManager.show();
-    if (Platform.isMacOS) await windowManager.setSkipTaskbar(false);
+    await windowManager.setSkipTaskbar(false);
   });
   runApp(const MyApp());
 }
