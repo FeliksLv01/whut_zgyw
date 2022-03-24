@@ -4,6 +4,12 @@
 
 ![截图](asset/home.png)
 
+## 使用方式
+
+[点击下载压缩包](https://github.com/kcqnly/whut_zgyw/releases/download/v1.0.0/win-release.zip)
+
+解压后双击exe运行
+
 ## 功能说明
 
 - 每隔一分钟刷新在线时长
