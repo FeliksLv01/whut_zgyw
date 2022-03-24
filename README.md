@@ -1,16 +1,11 @@
-# zgyw
+# 武汉理工大学中国语文刷时长工具
 
-A new Flutter project.
+使用Flutter Desktop搭建
 
-## Getting Started
+![截图](asset/home.png)
 
-This project is a starting point for a Flutter application.
+## 功能说明
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- 每隔一分钟刷新在线时长
+- 关闭窗口后可通过状态栏重新打开，期间仍在刷新时长
+- 可通过状态栏图标重新登录账号，或完全退出应用
