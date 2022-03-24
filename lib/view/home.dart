@@ -24,14 +24,19 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     trayManager.addListener(this);
     windowManager.addListener(this);
     windowManager.setPreventClose(true);
-    trayManager.setContextMenu([MenuItem(title: "重新登录"), MenuItem(title: "退出")]);
-    trayManager.setIcon(Platform.isWindows ? 'asset/books.ico' : 'asset/books.png');
+    _init();
     NetworkManager.instance.checkNetWork().then((isOk) {
       if (!isOk) {
         toast("请连接到校园网或VPN", duration: Toast.LENGTH_LONG);
       }
     });
     super.initState();
+  }
+
+  _init() async {
+    await trayManager.setContextMenu([MenuItem(key: "login", title: "重新登录"), MenuItem(key: "exit", title: "退出")]);
+    await trayManager.setIcon(Platform.isWindows ? 'asset/books.ico' : 'asset/books.png');
+    setState(() {});
   }
 
   @override
@@ -48,6 +53,13 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   }
 
   @override
+  void onWindowFocus() {
+    // Make sure to call once.
+    setState(() {});
+    // do something
+  }
+
+  @override
   void onTrayIconMouseDown() {
     windowManager.show();
   }
@@ -59,9 +71,9 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
 
   @override
   void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.title == "退出") {
+    if (menuItem.key == "exit") {
       windowManager.destroy();
-    } else if (menuItem.title == "重新登录") {
+    } else if (menuItem.key == "login") {
       setState(() {
         isLogin = false;
       });
