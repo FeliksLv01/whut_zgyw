@@ -17,7 +17,6 @@ class _OnLineBodyState extends State<OnLineBody> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     String username = SpUtil.getString("username") ?? "";
     String password = SpUtil.getString("password") ?? "";

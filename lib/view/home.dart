@@ -43,7 +43,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
 
   @override
   void onWindowClose() {
-    // TODO: implement onWindowClose
     super.onWindowClose();
     windowManager.hide();
   }

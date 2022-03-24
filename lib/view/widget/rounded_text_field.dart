@@ -24,7 +24,6 @@ class _RoundedInputFieldState extends State<RoundedInputField> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     isObscureText = widget.obscureText;
   }
