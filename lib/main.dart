@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:sp_util/sp_util.dart';
@@ -10,12 +12,12 @@ Future<void> main() async {
   await windowManager.ensureInitialized();
   windowManager.waitUntilReadyToShow().then((_) async {
     // 隐藏窗口标题栏
-    await windowManager.setTitleBarStyle("hidden");
+    if (Platform.isMacOS) await windowManager.setTitleBarStyle("hidden");
     await windowManager.setSize(const Size(800, 600));
     await windowManager.setMinimumSize(const Size(600, 500));
     await windowManager.center();
     await windowManager.show();
-    await windowManager.setSkipTaskbar(false);
+    if (Platform.isMacOS) await windowManager.setSkipTaskbar(false);
   });
   runApp(const MyApp());
 }
