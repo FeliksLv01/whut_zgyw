@@ -2,11 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:tray_manager/tray_manager.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zgyw/util/network.dart';
-
-import 'rounded_text_field.dart';
+import 'package:zgyw/view/login_body.dart';
+import 'package:zgyw/view/online_body.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -16,17 +17,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
-  final usernameController = TextEditingController();
-  final pwdController = TextEditingController();
+  var isLogin = false;
 
   @override
   void initState() {
     trayManager.addListener(this);
     windowManager.addListener(this);
     windowManager.setPreventClose(true);
-    trayManager.setContextMenu([MenuItem(title: "退出")]);
+    trayManager.setContextMenu([MenuItem(title: "重新登录"), MenuItem(title: "退出")]);
     trayManager.setIcon(Platform.isWindows ? 'asset/books.ico' : 'asset/books.png');
-    NetworkManager.checkNetWork().then((isOk) {
+    NetworkManager.instance.checkNetWork().then((isOk) {
       if (!isOk) {
         toast("请连接到校园网或VPN", duration: Toast.LENGTH_LONG);
       }
@@ -62,7 +62,39 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
   void onTrayMenuItemClick(MenuItem menuItem) {
     if (menuItem.title == "退出") {
       windowManager.destroy();
+    } else if (menuItem.title == "重新登录") {
+      setState(() {
+        isLogin = false;
+      });
     }
+  }
+
+  void showLoadingDialog(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Center(
+          child: Container(
+            width: 180,
+            height: 180,
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.all(Radius.circular(10)),
+            ),
+            child: const Center(
+              child: SizedBox(
+                height: 50,
+                width: 50,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  valueColor: AlwaysStoppedAnimation<Color>(Color(0xff5dc8f8)),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
   }
 
   @override
@@ -73,46 +105,28 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
         centerTitle: true,
         backgroundColor: const Color(0xff5dc8f8),
       ),
-      body: Center(
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Image.asset(
-              "asset/books.png",
-              height: 96,
-              width: 96,
-            ),
-            const SizedBox(height: 30),
-            RoundedInputField(
-              icon: Icons.person,
-              hintText: '学号',
-              controller: usernameController,
-            ),
-            RoundedInputField(
-              icon: Icons.lock,
-              hintText: '密码',
-              obscureText: true,
-              controller: pwdController,
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: () async {
-                NetworkManager.checkNetWork();
+      body: isLogin
+          ? const OnLineBody()
+          : LoginBody(
+              onTap: (username, password) async {
+                if (username.length < 10 || password.isEmpty) {
+                  toast("请输入正确的账号密码");
+                  return;
+                }
+                showLoadingDialog(context);
+                var flag = await NetworkManager.instance.login(username, password);
+                Navigator.pop(context);
+                if (!flag) {
+                  toast("账号或密码错误");
+                } else {
+                  SpUtil.putString("username", username);
+                  SpUtil.putString("password", password);
+                  setState(() {
+                    isLogin = true;
+                  });
+                }
               },
-              style: ElevatedButton.styleFrom(
-                primary: const Color(0xff5dc8f8),
-                shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.all(Radius.circular(10)),
-                ),
-              ),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
-                child: const Text('登录', style: TextStyle(fontSize: 20)),
-              ),
             ),
-          ],
-        ),
-      ),
     );
   }
 }

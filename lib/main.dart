@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
+import 'package:sp_util/sp_util.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zgyw/view/home.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await SpUtil.getInstance();
   await windowManager.ensureInitialized();
   windowManager.waitUntilReadyToShow().then((_) async {
     // 隐藏窗口标题栏

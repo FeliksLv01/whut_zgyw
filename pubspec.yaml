@@ -38,6 +38,7 @@ dependencies:
   http: ^0.13.4
   overlay_support: ^1.2.1
   html: ^0.15.0
+  sp_util: ^2.0.3
 
 dev_dependencies:
   flutter_test:
