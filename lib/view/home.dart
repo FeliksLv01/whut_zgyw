@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:overlay_support/overlay_support.dart';
 import 'package:sp_util/sp_util.dart';
-import 'package:tray_manager/tray_manager.dart';
+import 'package:system_tray/system_tray.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:zgyw/util/network.dart';
 import 'package:zgyw/view/login_body.dart';
@@ -16,33 +16,46 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
+class _HomePageState extends State<HomePage> with WindowListener {
   var isLogin = false;
+  final SystemTray _systemTray = SystemTray();
 
   @override
   void initState() {
-    trayManager.addListener(this);
     windowManager.addListener(this);
     windowManager.setPreventClose(true);
-    _init();
+    super.initState();
     NetworkManager.instance.checkNetWork().then((isOk) {
       if (!isOk) {
         toast("请连接到校园网或VPN", duration: Toast.LENGTH_LONG);
       }
     });
-    super.initState();
+    initTray();
   }
 
-  _init() async {
-    await trayManager.setContextMenu([MenuItem(key: "login", title: "重新登录"), MenuItem(key: "exit", title: "退出")]);
-    await trayManager.setIcon(Platform.isWindows ? 'asset/books.ico' : 'asset/books.png');
-    setState(() {});
+  Future<void> initTray() async {
+    const String _title = '';
+    const String _iconPathWin = 'asset/books.ico';
+    const String _iconPathOther = 'asset/books.png';
+    String _iconPath = Platform.isWindows ? _iconPathWin : _iconPathOther;
+    List<MenuItem> menus = [
+      MenuItem(label: "重新登录", onClicked: () => setState(() => isLogin = false)),
+      MenuItem(label: "退出", onClicked: () => windowManager.destroy())
+    ];
+    await _systemTray.initSystemTray(title: _title, iconPath: _iconPath);
+    await _systemTray.setContextMenu(menus);
+    _systemTray.registerSystemTrayEventHandler((eventName) {
+      if (eventName == 'leftMouseDown') {
+        windowManager.show();
+      } else if (eventName == 'rightMouseDown') {
+        _systemTray.popUpContextMenu();
+      }
+    });
   }
 
   @override
   void dispose() {
     windowManager.removeListener(this);
-    trayManager.removeListener(this);
     super.dispose();
   }
 
@@ -57,27 +70,6 @@ class _HomePageState extends State<HomePage> with TrayListener, WindowListener {
     // Make sure to call once.
     setState(() {});
     // do something
-  }
-
-  @override
-  void onTrayIconMouseDown() {
-    windowManager.show();
-  }
-
-  @override
-  void onTrayIconRightMouseDown() {
-    trayManager.popUpContextMenu();
-  }
-
-  @override
-  void onTrayMenuItemClick(MenuItem menuItem) {
-    if (menuItem.key == "exit") {
-      windowManager.destroy();
-    } else if (menuItem.key == "login") {
-      setState(() {
-        isLogin = false;
-      });
-    }
   }
 
   void showLoadingDialog(BuildContext context) {
